@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Epilogue:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!--
+    ============================================================
+    IMPLEMENTATION NOTE
+    Every element in this file maps to a spec ID from spec.yaml.
+    If an element has no spec ID → it should not exist.
+    ============================================================
+  -->
+
+  <div class="bg-grid"></div>
+
+  <main class="page">
+
+    <div class="card">
+
+      <!-- Header -->
+      <div class="card-head">
+        <div class="logo">◆</div>
+        <h1 class="card-title">Create account</h1>
+        <p class="card-sub">All fields marked <span class="req-star">*</span> are required.</p>
+      </div>
+
+      <!-- ===== FORM ===== -->
+      <!-- REG-B04: novalidate — we handle all validation ourselves -->
+      <form id="regForm" novalidate>
+
+        <!-- REG-F01: Full Name -->
+        <div class="field-group" id="fg-fullName">
+          <label for="fullName">Full Name <span class="req-star">*</span></label>
+          <div class="input-wrap">
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              placeholder="e.g. Aarya Nair"
+              autocomplete="name"
+              maxlength="80"
+            />
+            <span class="field-icon" id="icon-fullName"></span>
+          </div>
+          <span class="field-msg" id="msg-fullName"></span>
+        </div>
+
+        <!-- REG-F02: Email -->
+        <div class="field-group" id="fg-email">
+          <label for="email">Email Address <span class="req-star">*</span></label>
+          <div class="input-wrap">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
+            <span class="field-icon" id="icon-email"></span>
+          </div>
+          <span class="field-msg" id="msg-email"></span>
+        </div>
+
+        <!-- REG-F03 & REG-F04: Age + Sex (side by side) -->
+        <div class="row-two">
+
+          <!-- REG-F03: Age -->
+          <div class="field-group" id="fg-age">
+            <label for="age">Age <span class="req-star">*</span></label>
+            <div class="input-wrap">
+              <input
+                type="number"
+                id="age"
+                name="age"
+                placeholder="25"
+                min="13"
+                max="120"
+              />
+              <span class="field-icon" id="icon-age"></span>
+            </div>
+            <span class="field-msg" id="msg-age"></span>
+          </div>
+
+          <!-- REG-F04: Sex -->
+          <div class="field-group" id="fg-sex">
+            <label for="sex">Sex <span class="req-star">*</span></label>
+            <div class="input-wrap select-wrap">
+              <!-- REG-F04: allowed_values: male, female, non-binary, prefer-not-to-say -->
+              <select id="sex" name="sex">
+                <option value="">Select…</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="non-binary">Non-binary</option>
+                <option value="prefer-not-to-say">Prefer not to say</option>
+              </select>
+              <span class="field-icon" id="icon-sex"></span>
+            </div>
+            <span class="field-msg" id="msg-sex"></span>
+          </div>
+
+        </div>
+
+        <!-- REG-F05: Password -->
+        <div class="field-group" id="fg-password">
+          <label for="password">Password <span class="req-star">*</span></label>
+          <div class="input-wrap">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Min. 8 characters"
+            />
+            <!-- toggle is UX, not a spec requirement — kept minimal -->
+            <button type="button" class="eye-btn" id="eyeBtn" aria-label="Toggle password visibility">
+              <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <!-- REG-F05-R04: Strength indicator -->
+          <div class="strength-track">
+            <div class="strength-bar" id="strengthBar"></div>
+          </div>
+          <span class="field-msg" id="msg-password"></span>
+        </div>
+
+        <!-- REG-F06: Confirm Password -->
+        <div class="field-group" id="fg-confirmPassword">
+          <label for="confirmPassword">Confirm Password <span class="req-star">*</span></label>
+          <div class="input-wrap">
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Repeat your password"
+            />
+            <span class="field-icon" id="icon-confirmPassword"></span>
+          </div>
+          <span class="field-msg" id="msg-confirmPassword"></span>
+        </div>
+
+        <!-- REG-F07: Terms -->
+        <div class="field-group checkbox-group" id="fg-termsAccepted">
+          <label class="check-label">
+            <input type="checkbox" id="termsAccepted" name="termsAccepted"/>
+            <span class="checkmark"></span>
+            <span class="check-text">
+              I accept the <a href="#" class="inline-link">Terms &amp; Conditions</a>
+              <span class="req-star">*</span>
+            </span>
+          </label>
+          <span class="field-msg" id="msg-termsAccepted"></span>
+        </div>
+
+        <!-- REG-B05: Submit — loading state handled in JS -->
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span id="btnLabel">Create account</span>
+          <span class="spinner" id="btnSpinner"></span>
+        </button>
+
+      </form>
+
+      <!-- REG-U06: Success screen (hidden until REG-B06) -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-check">✓</div>
+        <h2 class="success-title" id="successTitle">Welcome!</h2>
+        <p class="success-msg">Your account has been created successfully.</p>
+        <button class="btn-submit" onclick="resetDemo()">Register another →</button>
+      </div>
+
+      <!-- REG-B07: API error banner (hidden by default) -->
+      <div class="error-banner" id="errorBanner">
+        Something went wrong. Please try again.
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+# ================================================================
+#  REGISTRATION FORM — MASTER SPECIFICATION
+#  Version : 1.0.0
+#  Status  : APPROVED
+#  Date    : 2026-05-02
+#
+#  ⚠️  THIS FILE IS THE SINGLE SOURCE OF TRUTH.
+#      No field, validation rule, error message, or behaviour
+#      may exist in the code unless it is defined here first.
+#      Code is evidence that the spec was implemented.
+# ================================================================
+
+meta:
+  project: "User Registration Form"
+  spec_version: "1.0.0"
+  authors: ["Aarya"]
+  last_updated: "2026-05-02"
+
+# ----------------------------------------------------------------
+# SECTION 1 — FIELDS
+# Each field has: id, label, type, required, rules, errors
+# ----------------------------------------------------------------
+
+fields:
+
+  - id: REG-F01
+    name: fullName
+    label: "Full Name"
+    type: text
+    required: true
+    rules:
+      - id: REG-F01-R01
+        rule: "Must not be empty"
+        error: "Full name is required"
+      - id: REG-F01-R02
+        rule: "Minimum 2 characters"
+        error: "Name must be at least 2 characters"
+      - id: REG-F01-R03
+        rule: "Maximum 80 characters"
+        error: "Name must be under 80 characters"
+      - id: REG-F01-R04
+        rule: "Letters, spaces, hyphens and apostrophes only"
+        error: "Name can only contain letters"
+
+  - id: REG-F02
+    name: email
+    label: "Email Address"
+    type: email
+    required: true
+    rules:
+      - id: REG-F02-R01
+        rule: "Must not be empty"
+        error: "Email address is required"
+      - id: REG-F02-R02
+        rule: "Must match pattern: one or more non-whitespace chars, @, domain, dot, tld"
+        error: "Enter a valid email address"
+
+  - id: REG-F03
+    name: age
+    label: "Age"
+    type: number
+    required: true
+    rules:
+      - id: REG-F03-R01
+        rule: "Must not be empty"
+        error: "Age is required"
+      - id: REG-F03-R02
+        rule: "Must be an integer >= 13"
+        error: "You must be at least 13 years old"
+      - id: REG-F03-R03
+        rule: "Must be an integer <= 120"
+        error: "Please enter a valid age"
+
+  - id: REG-F04
+    name: sex
+    label: "Sex"
+    type: select
+    required: true
+    allowed_values: [male, female, non-binary, prefer-not-to-say]
+    rules:
+      - id: REG-F04-R01
+        rule: "Must not be empty — a value must be selected"
+        error: "Please select an option"
+
+  - id: REG-F05
+    name: password
+    label: "Password"
+    type: password
+    required: true
+    rules:
+      - id: REG-F05-R01
+        rule: "Must not be empty"
+        error: "Password is required"
+      - id: REG-F05-R02
+        rule: "Minimum 8 characters"
+        error: "Password must be at least 8 characters"
+      - id: REG-F05-R03
+        rule: "Must satisfy at least 2 of: uppercase letter, lowercase letter, digit, special character"
+        error: "Password is too weak — add uppercase letters, numbers or symbols"
+      - id: REG-F05-R04
+        rule: "A visual strength indicator must be shown (weak / fair / strong)"
+        error: null
+
+  - id: REG-F06
+    name: confirmPassword
+    label: "Confirm Password"
+    type: password
+    required: true
+    rules:
+      - id: REG-F06-R01
+        rule: "Must not be empty"
+        error: "Please confirm your password"
+      - id: REG-F06-R02
+        rule: "Must exactly equal the value of REG-F05 (password)"
+        error: "Passwords do not match"
+
+  - id: REG-F07
+    name: termsAccepted
+    label: "Terms & Conditions"
+    type: checkbox
+    required: true
+    rules:
+      - id: REG-F07-R01
+        rule: "Must be checked (true) — unchecked blocks submission"
+        error: "You must accept the terms to continue"
+
+# ----------------------------------------------------------------
+# SECTION 2 — BEHAVIOURS
+# Defines when and how validation fires
+# ----------------------------------------------------------------
+
+behaviours:
+
+  - id: REG-B01
+    trigger: "onBlur (field loses focus)"
+    action: "Validate that field immediately and show inline error or success state"
+
+  - id: REG-B02
+    trigger: "onInput (user types in password field)"
+    action: "Update strength indicator in real time (REG-F05-R04)"
+
+  - id: REG-B03
+    trigger: "onInput (user types in confirmPassword)"
+    action: "Re-validate match against current password value (REG-F06-R02)"
+
+  - id: REG-B04
+    trigger: "onSubmit"
+    action: "Run ALL field validators. If any fail: show all errors, focus first invalid field. Do NOT call API."
+
+  - id: REG-B05
+    trigger: "onSubmit (all fields valid)"
+    action: "Disable submit button, show loading spinner, simulate API call for 1500ms"
+
+  - id: REG-B06
+    trigger: "API call completes successfully"
+    action: "Hide form, show success message with user's name"
+
+  - id: REG-B07
+    trigger: "API call fails (simulated)"
+    action: "Re-enable button, show error banner — never expose stack trace"
+
+# ----------------------------------------------------------------
+# SECTION 3 — UI STATES
+# Defines the visual states each field can be in
+# ----------------------------------------------------------------
+
+ui_states:
+
+  - id: REG-U01
+    state: default
+    description: "Neutral border, no icon"
+
+  - id: REG-U02
+    state: focused
+    description: "Dark border + subtle focus ring"
+
+  - id: REG-U03
+    state: valid
+    description: "Green border + green tick icon"
+
+  - id: REG-U04
+    state: error
+    description: "Red border + red error message below field"
+
+  - id: REG-U05
+    state: loading
+    description: "Submit button disabled, spinner shown, text changes to 'Creating account…'"
+
+  - id: REG-U06
+    state: success
+    description: "Form replaced by success message showing user's name"
+
+# ----------------------------------------------------------------
+# SECTION 4 — WHAT IS EXPLICITLY OUT OF SCOPE (Won't Have)
+# Prevents scope creep — these must NOT be built in v1
+# ----------------------------------------------------------------
+
+out_of_scope:
+  - "Phone number field"
+  - "Date of birth field"
+  - "Country selector"
+  - "Profile photo upload"
+  - "OAuth / social login (Google, GitHub)"
+  - "Email verification flow"
+  - "CAPTCHA"
+  - "Remember me checkbox"
+  - "Real backend API call"
+
+# ----------------------------------------------------------------
+# SECTION 5 — ACCEPTANCE CRITERIA
+# The definition of DONE. All must be true before shipping.
+# ----------------------------------------------------------------
+
+acceptance_criteria:
+  - id: REG-AC01
+    criteria: "All 7 fields defined in Section 1 are present and functional"
+  - id: REG-AC02
+    criteria: "Every rule in Section 1 triggers the correct error message"
+  - id: REG-AC03
+    criteria: "All behaviours in Section 2 fire at the correct trigger"
+  - id: REG-AC04
+    criteria: "All UI states in Section 3 are visually distinguishable"
+  - id: REG-AC05
+    criteria: "No field, feature or behaviour exists that is not defined in this spec"
+  - id: REG-AC06
+    criteria: "Every code comment references a spec ID from this file"
